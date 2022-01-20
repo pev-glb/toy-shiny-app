@@ -1,0 +1,109 @@
+---
+title: "nber_eda"
+output: html_document
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+library(tidyverse)
+library(scales)
+library(ggtext)
+library(showtext)
+
+font_add_google(family = "patua-one", "Patua One")
+showtext.auto()
+
+theme_set(theme_light())
+
+tuesdata <- tidytuesdayR::tt_load(2021, week = 40)
+```
+
+
+```{r setup, include=FALSE}
+tuesdata$
+
+papers <- tuesdata$papers
+
+tuesdata$paper_programs
+```
+
+```{r}
+inner_join(tuesdata$paper_authors, tuesdata$paper_programs) %>% 
+  
+```
+
+```{r}
+this_title = "<span style='color: #0000FF'>Labor studies</span> and <span style='color: #0000FF'>Public Economics</span> had the most papers published in NBER since 1968"
+
+tuesdata$paper_programs %>% 
+  left_join(tuesdata$programs) %>% 
+  count(program_desc) %>%
+  mutate(program_desc = fct_reorder(program_desc, n)) %>% 
+  ggplot(aes(n, program_desc)) +
+  geom_col() +
+  theme(
+    axis.ticks = element_blank(),
+    panel.grid.major.y = element_blank(),
+    panel.grid.minor.y = element_blank(),
+    plot.title = element_textbox_simple(
+      family = "patua-one",
+      size = 30,
+      lineheight = 1,
+      color = "#000000",
+      margin = margin(b = 10)),
+    panel.border = element_blank(),
+    axis.line.y = element_line(color = "black", size = 1),
+    axis.line.x = element_line(color = "black", size = 1)
+  ) +
+  scale_x_continuous(expand = expansion(add = 0, mult = c(0, 0.1))) +
+  labs(
+    x = "",
+    y = "Program description",
+    title = this_title
+  )
+```
+
+```{r}
+this_title = "The 20 authors who wrote the most papers in the <span style='color: #0000FF'>AG</span> category"
+
+
+nber_all_data <- tuesdata$paper_programs %>% 
+  left_join(tuesdata$programs) %>% 
+  left_join(tuesdata$paper_authors) %>% 
+  left_join(tuesdata$authors) 
+
+saveRDS(nber_all_data, file = "nber_all_data.RDS")
+
+nber_all_data %>% 
+  filter(program == "AG") %>% 
+  count(name, sort = TRUE) %>% 
+  top_n(20, wt = n) %>%
+  mutate(name = fct_reorder(name, n)) %>% 
+  ggplot(aes(n, name)) +
+  geom_col()+
+  theme(
+    axis.ticks = element_blank(),
+    panel.grid.major.y = element_blank(),
+    panel.grid.minor.y = element_blank(),
+    plot.title = element_textbox_simple(
+      family = "patua-one",
+      size = 30,
+      lineheight = 1,
+      color = "#000000",
+      margin = margin(b = 10)),
+    panel.border = element_blank(),
+    axis.line.y = element_line(color = "black", size = 1),
+    axis.line.x = element_line(color = "black", size = 1)
+  ) +
+  labs(
+    x = "# of papers",
+    y = "",
+    title = this_title
+  ) +
+  scale_x_continuous(
+    expand = expansion(add = 0, mult = c(0, 0.1))
+  )
+```
+
+
+
