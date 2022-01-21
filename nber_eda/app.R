@@ -14,7 +14,6 @@ showtext_auto()
 
 nber_all_data <- readRDS("nber_all_data.RDS")
 
-# Define UI for application that draws a histogram
 ui <- dashboardPage(
   dashboardHeader(title = "NBER Eda"),
   dashboardSidebar(
@@ -26,20 +25,15 @@ ui <- dashboardPage(
   ),
 )
 
-# Define server logic required to draw a histogram
 server <- function(input, output) {
-  
-  
 
     output$author_hist <- renderPlot({
-      
       
       top_authors <- nber_all_data %>% 
         filter(program_desc == input$v_program_name) %>% 
         count(name, sort = TRUE) %>% 
         top_n(20, wt = n) %>%
         mutate(name = fct_reorder(name, n)) 
-      
       
       this_title = reactive(glue("<br><span style='color: #0000FF'>{ top_authors %>% slice_max(n) %>% pull(name) }</span> wrote the most papers in the <span style='color: #0000FF'>{ input$v_program_name }</span> category"))
       
